@@ -2,8 +2,15 @@
 
 * [中文](./README_CN.md)
 
-This is an IIC to dual UART module with 1Mbps IIC transmission rate, and each sub UART is able to receive/transmit independent 256 bytes FIFO hardware cache. It can be used in the applications requiring the transmission of large amounts of data. <br>
-The band rate, word length, and check format of every sub UART can be set independently. The module can provide at most 2Mbps communication rate, and support 4 IIC addresses. Four such modules can be connected to one controller board to expand 8 hardware serial port. <br>
+This is an Arduino library for the DFRobot IIC to dual UART module with 1Mbps IIC transmission rate. This module allows communication between I2C and UART interfaces. Each sub UART has independent 256 bytes FIFO hardware cache and can be used for applications requiring large amounts of data transmission. <br>
+
+The library provides functions to:
+- Configure baud rate, word length, and check format for each sub UART independently
+- Read data from the UART interface
+- Write data to the UART interface
+- Set up communication parameters and handle data transmission
+
+The module supports up to 2Mbps communication rate and can be configured with 4 different IIC addresses. Up to 4 modules can be connected to one controller board to expand up to 8 hardware serial ports. <br>
 
 ![产品效果图](./resources/images/DFR0627.png)
 
