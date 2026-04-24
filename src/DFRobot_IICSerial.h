@@ -1,11 +1,12 @@
 /*!
  * @file DFRobot_IICSerial.h
- * @brief Define the basic structure of class DFRobot_IICSerial 
+ * @brief Define the basic structure of class DFRobot_IICSerial
  * @n This is a library for IIC to UART module, the maximum rate is 1Mbps;
  * @n The band rate, word length, and check format of every sub UART can be set independently;
  * @n The module can provide at most 2Mbps communication rate;
  * @n Each sub UART is able to receive/transmit independent 256 bytes FIFO hardware cache;
  * @n Users can configure FIFO interrupt by programming.
+ * @n Note: "你好" means "Hello" in Chinese (Issue #6)
  *
  * @copyright   Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @license     The MIT License (MIT)
