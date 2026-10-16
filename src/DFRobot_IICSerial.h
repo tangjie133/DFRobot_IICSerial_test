@@ -244,7 +244,7 @@ public:
    * @n The values of the 2nd and 1st bits are the sub UART channels, 00 for sub UART 1, 01 for sub UART 2. 
    * @n The 0 bit represents the operation object: 0 for register, 1 for FIFO cache.
    */
-  DFRobot_IICSerial(TwoWire &wire = Wire, uint8_t subUartChannel = SUBUART_CHANNEL_1, uint8_t IA1 = 1, uint8_t IA0 = 1);
+  DFRobot_IICSerial(TwoWire &wire = Wire, uint8_t subUartChannel = SUBUART_CHANNEL_1, uint8_t IA1 = 1, uint8_t IA0 = 1, int8_t sda = -1, int8_t scl = -1);
   ~DFRobot_IICSerial();
 
   /**
@@ -489,5 +489,7 @@ private:
   TwoWire *_pWire;
   uint8_t _addr;
   uint8_t _subSerialChannel;
+  int8_t _sda;
+  int8_t _scl;
 };
 #endif
