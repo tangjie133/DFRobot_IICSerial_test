@@ -63,10 +63,12 @@ DFRobot_IICSerial::~DFRobot_IICSerial(){
 
 int DFRobot_IICSerial::begin(long unsigned baud, uint8_t format, eCommunicationMode_t mode, eLineBreakOutput_t opt){
   _rx_buffer_head = _rx_buffer_tail;
-  if(!_pWire->begin()){
-      DBG("I2C begin failed!");
-      return DFROBOT_IICSERIAL_ERR_READ;
-  }
+  // On some platforms (e.g. ESP32) the I2C driver may already be installed
+  // (e.g. by a display controller on the board); Wire.begin() may report
+  // failure but the bus is still functional, so we proceed regardless.
+  // Note: TwoWire::begin() returns void on AVR, so we do not check its
+  // return value to stay portable across boards.
+  _pWire->begin();
   uint8_t val = 0;
   uint8_t channel = subSerialChnnlSwitch(SUBUART_CHANNEL_1);
   if(readReg(REG_WK2132_GENA, &val, 1) != 1){
