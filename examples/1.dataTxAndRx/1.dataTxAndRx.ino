@@ -31,6 +31,10 @@
  *@n The values of the 2nd and 1st bits are the sub UART channels, 00 for sub UART 1, 01 for sub UART 2. 
  *@n The 0 bit represents the operation object: 0 for register, 1 for FIFO cache.
  */
+// On boards like the Waveshare ESP32-S3-Touch-LCD5, the default Wire pins may conflict
+// with the display/touch I2C bus, causing "i2c driver install error". If that happens,
+// pass the SDA/SCL pins you actually wired the module to (last two constructor args):
+// DFRobot_IICSerial iicSerial1(Wire, SUBUART_CHANNEL_1, 1, 1, /*sda=*/21, /*scl=*/22);
 DFRobot_IICSerial iicSerial1(Wire, /*subUartChannel =*/SUBUART_CHANNEL_1,/*IA1 = */1,/*IA0 = */1);//Construct UART1
 //DFRobot_IICSerial iicSerial1;//Default constructor, UART1, IA1 = 1, IA0 = 1
 DFRobot_IICSerial iicSerial2(Wire, /*subUartChannel =*/SUBUART_CHANNEL_2, /*IA1 = */1,/*IA0 = */1);//Construct UART2

@@ -48,10 +48,12 @@
 #define REG_WK2132_RFTL   0x07   //< Sub UART receive FIFO interrupt trigger configuration register
 #define REG_WK2132_TFTL   0x08   //< Sub UART transmit FIFO interrupt trigger configuration register
 
-DFRobot_IICSerial::DFRobot_IICSerial(TwoWire &wire,  uint8_t subUartChannel, uint8_t IA1, uint8_t IA0){
+DFRobot_IICSerial::DFRobot_IICSerial(TwoWire &wire,  uint8_t subUartChannel, uint8_t IA1, uint8_t IA0, int8_t sda, int8_t scl){
   _pWire = &wire;
   _addr = (IA1 << 6) | (IA0 << 5) | DFROBOT_IICSERIAL_IIC_ADDR_FIXED;
   _subSerialChannel = subUartChannel;
+  _sda = sda;
+  _scl = scl;
   _rx_buffer_head = 0;
   _rx_buffer_tail = 0;
   memset(_rx_buffer, 0, sizeof(_rx_buffer));
@@ -61,16 +63,29 @@ DFRobot_IICSerial::~DFRobot_IICSerial(){
   
 }
 
+static TwoWire* _lastInitializedWire = nullptr;
+
 int DFRobot_IICSerial::begin(long unsigned baud, uint8_t format, eCommunicationMode_t mode, eLineBreakOutput_t opt){
   _rx_buffer_head = _rx_buffer_tail;
-  if(!_pWire->begin()){
-      DBG("I2C begin failed!");
-      return DFROBOT_IICSERIAL_ERR_READ;
+  if (_lastInitializedWire != _pWire) {
+#if defined(ESP32) || defined(ESP8266) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_ARCH_MBED)
+      if(_sda >= 0 && _scl >= 0) {
+          _pWire->begin(_sda, _scl);
+      } else {
+          _pWire->begin();
+      }
+#else
+      _pWire->begin();
+#endif
+      _lastInitializedWire = _pWire;
   }
   uint8_t val = 0;
   uint8_t channel = subSerialChnnlSwitch(SUBUART_CHANNEL_1);
   if(readReg(REG_WK2132_GENA, &val, 1) != 1){
-      DBG("READ BYTEERROR!");
+      Serial.println(F("[DFRobot_IICSerial] begin(): I2C communication failed."));
+      Serial.println(F("  Check: 1) I2C wiring (SDA/SCL)  2) I2C address (IA1/IA0)  3) Power supply"));
+      Serial.println(F("  If using ESP32-S3 with a display/touch driver, the I2C driver may already be installed."));
+      Serial.println(F("  Try using a separate TwoWire instance: TwoWire w2(1); DFRobot_IICSerial iic(w2, ...);"));
       return DFROBOT_IICSERIAL_ERR_READ;
   }
 #ifndef ARDUINO_ARCH_NRF5
