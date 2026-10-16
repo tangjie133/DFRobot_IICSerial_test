@@ -63,10 +63,7 @@ DFRobot_IICSerial::~DFRobot_IICSerial(){
 
 int DFRobot_IICSerial::begin(long unsigned baud, uint8_t format, eCommunicationMode_t mode, eLineBreakOutput_t opt){
   _rx_buffer_head = _rx_buffer_tail;
-  if(!_pWire->begin()){
-      DBG("I2C begin failed!");
-      return DFROBOT_IICSERIAL_ERR_READ;
-  }
+  _pWire->begin();
   uint8_t val = 0;
   uint8_t channel = subSerialChnnlSwitch(SUBUART_CHANNEL_1);
   if(readReg(REG_WK2132_GENA, &val, 1) != 1){
@@ -183,9 +180,10 @@ size_t DFRobot_IICSerial::read(void *pBuf, size_t size){
     return 0;
   }
   uint8_t *_pBuf = (uint8_t *)pBuf;
-  size = available() - (((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE);
-  readFIFO(_pBuf, size);
-  return size;
+  size_t availableBytes = available() - (((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE);
+  size_t toRead = (availableBytes < size) ? availableBytes : size;
+  readFIFO(_pBuf, toRead);
+  return toRead;
 }
 void DFRobot_IICSerial::flush(void){
   sFsrReg_t fsr = readFIFOStateReg();
